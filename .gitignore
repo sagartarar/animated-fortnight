@@ -11,8 +11,8 @@ __pycache__/
 .cache/
 *.log
 
-# Data bank (too large for git, keep locally)
-data_bank/
+# Data bank - included for backtesting
+# data_bank/
 
 # Tracked positions (live trading state)
 .tracked_positions.json

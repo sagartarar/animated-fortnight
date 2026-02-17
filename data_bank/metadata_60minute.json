@@ -1,0 +1,583 @@
+{
+  "stocks": {
+    "RELIANCE": {
+      "candles": 1898
+    },
+    "TCS": {
+      "candles": 1898
+    },
+    "HDFCBANK": {
+      "candles": 1898
+    },
+    "INFY": {
+      "candles": 1898
+    },
+    "ICICIBANK": {
+      "candles": 1898
+    },
+    "HINDUNILVR": {
+      "candles": 1898
+    },
+    "SBIN": {
+      "candles": 1898
+    },
+    "BHARTIARTL": {
+      "candles": 1898
+    },
+    "KOTAKBANK": {
+      "candles": 1898
+    },
+    "ITC": {
+      "candles": 1898
+    },
+    "LT": {
+      "candles": 1898
+    },
+    "AXISBANK": {
+      "candles": 1898
+    },
+    "BAJFINANCE": {
+      "candles": 1898
+    },
+    "MARUTI": {
+      "candles": 1898
+    },
+    "ASIANPAINT": {
+      "candles": 1898
+    },
+    "HCLTECH": {
+      "candles": 1898
+    },
+    "SUNPHARMA": {
+      "candles": 1898
+    },
+    "TITAN": {
+      "candles": 1898
+    },
+    "ULTRACEMCO": {
+      "candles": 1898
+    },
+    "WIPRO": {
+      "candles": 1898
+    },
+    "TATASTEEL": {
+      "candles": 1898
+    },
+    "POWERGRID": {
+      "candles": 1898
+    },
+    "NTPC": {
+      "candles": 1898
+    },
+    "M&M": {
+      "candles": 1898
+    },
+    "JSWSTEEL": {
+      "candles": 1898
+    },
+    "BAJAJFINSV": {
+      "candles": 1898
+    },
+    "ADANIENT": {
+      "candles": 1898
+    },
+    "ADANIPORTS": {
+      "candles": 1898
+    },
+    "ONGC": {
+      "candles": 1898
+    },
+    "NESTLEIND": {
+      "candles": 1898
+    },
+    "COALINDIA": {
+      "candles": 1898
+    },
+    "TECHM": {
+      "candles": 1898
+    },
+    "INDUSINDBK": {
+      "candles": 1898
+    },
+    "BRITANNIA": {
+      "candles": 1898
+    },
+    "HINDALCO": {
+      "candles": 1898
+    },
+    "DRREDDY": {
+      "candles": 1898
+    },
+    "DIVISLAB": {
+      "candles": 1898
+    },
+    "CIPLA": {
+      "candles": 1898
+    },
+    "EICHERMOT": {
+      "candles": 1898
+    },
+    "GRASIM": {
+      "candles": 1898
+    },
+    "APOLLOHOSP": {
+      "candles": 1898
+    },
+    "BPCL": {
+      "candles": 1898
+    },
+    "TATACONSUM": {
+      "candles": 1898
+    },
+    "HEROMOTOCO": {
+      "candles": 1898
+    },
+    "SHREECEM": {
+      "candles": 1898
+    },
+    "SBILIFE": {
+      "candles": 1898
+    },
+    "HDFCLIFE": {
+      "candles": 1898
+    },
+    "UPL": {
+      "candles": 1898
+    },
+    "BAJAJ-AUTO": {
+      "candles": 1898
+    },
+    "BANKBARODA": {
+      "candles": 1898
+    },
+    "PNB": {
+      "candles": 1898
+    },
+    "CANBK": {
+      "candles": 1898
+    },
+    "IOC": {
+      "candles": 1898
+    },
+    "GAIL": {
+      "candles": 1898
+    },
+    "VEDL": {
+      "candles": 1898
+    },
+    "JINDALSTEL": {
+      "candles": 1898
+    },
+    "DLF": {
+      "candles": 1898
+    },
+    "SAIL": {
+      "candles": 1898
+    },
+    "NMDC": {
+      "candles": 1898
+    },
+    "PIDILITIND": {
+      "candles": 1898
+    },
+    "HAVELLS": {
+      "candles": 1898
+    },
+    "SIEMENS": {
+      "candles": 1898
+    },
+    "ABB": {
+      "candles": 1898
+    },
+    "GODREJCP": {
+      "candles": 1898
+    },
+    "DABUR": {
+      "candles": 1898
+    },
+    "MARICO": {
+      "candles": 1898
+    },
+    "COLPAL": {
+      "candles": 1898
+    },
+    "BERGEPAINT": {
+      "candles": 1898
+    },
+    "INDIGO": {
+      "candles": 1898
+    },
+    "TRENT": {
+      "candles": 1898
+    },
+    "IRCTC": {
+      "candles": 1898
+    },
+    "MANKIND": {
+      "candles": 1898
+    },
+    "MAXHEALTH": {
+      "candles": 1898
+    },
+    "FORTIS": {
+      "candles": 1898
+    },
+    "AUROPHARMA": {
+      "candles": 1898
+    },
+    "TORNTPHARM": {
+      "candles": 1898
+    },
+    "LUPIN": {
+      "candles": 1898
+    },
+    "ZYDUSLIFE": {
+      "candles": 1898
+    },
+    "BIOCON": {
+      "candles": 1898
+    },
+    "ALKEM": {
+      "candles": 1898
+    },
+    "IPCALAB": {
+      "candles": 1898
+    },
+    "LAURUSLABS": {
+      "candles": 1898
+    },
+    "TATAPOWER": {
+      "candles": 1898
+    },
+    "NHPC": {
+      "candles": 1898
+    },
+    "SJVN": {
+      "candles": 1898
+    },
+    "RECLTD": {
+      "candles": 1898
+    },
+    "PFC": {
+      "candles": 1898
+    },
+    "IRFC": {
+      "candles": 1898
+    },
+    "BEL": {
+      "candles": 1898
+    },
+    "HAL": {
+      "candles": 1898
+    },
+    "BHEL": {
+      "candles": 1898
+    },
+    "CUMMINSIND": {
+      "candles": 1898
+    },
+    "MPHASIS": {
+      "candles": 1898
+    },
+    "LTIM": {
+      "candles": 1898
+    },
+    "PERSISTENT": {
+      "candles": 1898
+    },
+    "COFORGE": {
+      "candles": 1898
+    },
+    "LTTS": {
+      "candles": 1898
+    },
+    "TATAELXSI": {
+      "candles": 1898
+    },
+    "MOTHERSON": {
+      "candles": 1898
+    },
+    "BOSCHLTD": {
+      "candles": 1898
+    },
+    "MRF": {
+      "candles": 1898
+    },
+    "ASHOKLEY": {
+      "candles": 1898
+    },
+    "ESCORTS": {
+      "candles": 1898
+    },
+    "EXIDEIND": {
+      "candles": 1898
+    },
+    "BALKRISIND": {
+      "candles": 1898
+    },
+    "APOLLOTYRE": {
+      "candles": 1898
+    },
+    "CHOLAFIN": {
+      "candles": 1898
+    },
+    "MUTHOOTFIN": {
+      "candles": 1898
+    },
+    "MANAPPURAM": {
+      "candles": 1898
+    },
+    "LICHSGFIN": {
+      "candles": 1898
+    },
+    "CANFINHOME": {
+      "candles": 1898
+    },
+    "ABCAPITAL": {
+      "candles": 1898
+    },
+    "M&MFIN": {
+      "candles": 1898
+    },
+    "SHRIRAMFIN": {
+      "candles": 1898
+    },
+    "FEDERALBNK": {
+      "candles": 1898
+    },
+    "IDFCFIRSTB": {
+      "candles": 1898
+    },
+    "BANDHANBNK": {
+      "candles": 1898
+    },
+    "RBLBANK": {
+      "candles": 1898
+    },
+    "AUBANK": {
+      "candles": 1898
+    },
+    "INDIANB": {
+      "candles": 1898
+    },
+    "UNIONBANK": {
+      "candles": 1898
+    },
+    "OBEROIRLTY": {
+      "candles": 1898
+    },
+    "PRESTIGE": {
+      "candles": 1898
+    },
+    "GODREJPROP": {
+      "candles": 1898
+    },
+    "PHOENIXLTD": {
+      "candles": 1898
+    },
+    "LICI": {
+      "candles": 1898
+    },
+    "SBICARD": {
+      "candles": 1898
+    },
+    "HDFCAMC": {
+      "candles": 1898
+    },
+    "ICICIGI": {
+      "candles": 1898
+    },
+    "ICICIPRULI": {
+      "candles": 1898
+    },
+    "NIACL": {
+      "candles": 1898
+    },
+    "CRISIL": {
+      "candles": 1898
+    },
+    "METROPOLIS": {
+      "candles": 1898
+    },
+    "LALPATHLAB": {
+      "candles": 1898
+    },
+    "DMART": {
+      "candles": 1898
+    },
+    "TATACOMM": {
+      "candles": 1898
+    },
+    "ABFRL": {
+      "candles": 1898
+    },
+    "PAGEIND": {
+      "candles": 1898
+    },
+    "BATAINDIA": {
+      "candles": 1898
+    },
+    "JUBLFOOD": {
+      "candles": 1898
+    },
+    "DEVYANI": {
+      "candles": 1898
+    },
+    "EMAMILTD": {
+      "candles": 1898
+    },
+    "VGUARD": {
+      "candles": 1898
+    },
+    "CROMPTON": {
+      "candles": 1898
+    },
+    "VOLTAS": {
+      "candles": 1898
+    },
+    "WHIRLPOOL": {
+      "candles": 1898
+    },
+    "DIXON": {
+      "candles": 1898
+    },
+    "POLYCAB": {
+      "candles": 1898
+    },
+    "AFFLE": {
+      "candles": 1898
+    },
+    "KPITTECH": {
+      "candles": 1898
+    },
+    "MASTEK": {
+      "candles": 1898
+    },
+    "CYIENT": {
+      "candles": 1898
+    },
+    "PIIND": {
+      "candles": 1898
+    },
+    "ATUL": {
+      "candles": 1898
+    },
+    "DEEPAKNTR": {
+      "candles": 1898
+    },
+    "SRF": {
+      "candles": 1898
+    },
+    "NAVINFLUOR": {
+      "candles": 1898
+    },
+    "FLUOROCHEM": {
+      "candles": 1898
+    },
+    "PETRONET": {
+      "candles": 1898
+    },
+    "GSPL": {
+      "candles": 1898
+    },
+    "IGL": {
+      "candles": 1898
+    },
+    "MGL": {
+      "candles": 1898
+    },
+    "INDIAMART": {
+      "candles": 1898
+    },
+    "NAUKRI": {
+      "candles": 1898
+    },
+    "ZEEL": {
+      "candles": 1898
+    },
+    "PVRINOX": {
+      "candles": 1898
+    },
+    "SUNTV": {
+      "candles": 1898
+    },
+    "IDEA": {
+      "candles": 1898
+    },
+    "YESBANK": {
+      "candles": 1898
+    },
+    "SUZLON": {
+      "candles": 1898
+    },
+    "NATIONALUM": {
+      "candles": 1898
+    },
+    "HINDZINC": {
+      "candles": 1898
+    },
+    "NBCC": {
+      "candles": 1898
+    },
+    "NCC": {
+      "candles": 1898
+    },
+    "IRB": {
+      "candles": 1898
+    },
+    "KEC": {
+      "candles": 1898
+    },
+    "THERMAX": {
+      "candles": 1898
+    },
+    "GRINDWELL": {
+      "candles": 1898
+    },
+    "SCHAEFFLER": {
+      "candles": 1898
+    },
+    "TIMKEN": {
+      "candles": 1898
+    },
+    "SKFINDIA": {
+      "candles": 1898
+    },
+    "SUPREMEIND": {
+      "candles": 1898
+    },
+    "ASTRAL": {
+      "candles": 1898
+    },
+    "APLAPOLLO": {
+      "candles": 1898
+    },
+    "RATNAMANI": {
+      "candles": 1898
+    },
+    "CONCOR": {
+      "candles": 1898
+    },
+    "GUJGASLTD": {
+      "candles": 1898
+    },
+    "JKCEMENT": {
+      "candles": 1898
+    },
+    "RAMCOCEM": {
+      "candles": 1898
+    },
+    "ACC": {
+      "candles": 1898
+    },
+    "AMBUJACEM": {
+      "candles": 1898
+    },
+    "NUVOCO": {
+      "candles": 1898
+    }
+  },
+  "total_candles": 364416,
+  "timeframe": "60minute",
+  "last_updated": "2026-02-15T12:06:49.276845"
+}
