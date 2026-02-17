@@ -1,0 +1,51 @@
+# Credentials and secrets (NEVER commit these!)
+.kite_creds.json
+.kite_session.json
+*.env
+.env.*
+
+# Session and cache files
+__pycache__/
+*.pyc
+*.pyo
+.cache/
+*.log
+
+# Data bank (too large for git, keep locally)
+data_bank/
+
+# Tracked positions (live trading state)
+.tracked_positions.json
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.cursor/
+
+# Virtual environments
+venv/
+my_venv/
+.venv/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs directory (keep structure, ignore contents)
+logs/*.log
+
+# Tradebook (contains trade history)
+tradebook/
+
+# Test files
+*.xlsx
+*.csv
+
+# Backup files
+*.backup
+*.bak
