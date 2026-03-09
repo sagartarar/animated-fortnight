@@ -459,10 +459,10 @@ def list_tradebook_dates():
 CREDS_FILE = "/u/tarar/repos/.kite_creds.json"
 SESSION_FILE = "/u/tarar/repos/.kite_session.json"
 
-CAPITAL = 30000
+CAPITAL = 100000
 MAX_RISK_PER_TRADE = 0.02  # 2%
-MAX_RISK_AMOUNT = CAPITAL * MAX_RISK_PER_TRADE  # ₹600
-MAX_DAILY_LOSS = 0.05  # 5% kill switch
+MAX_RISK_AMOUNT = CAPITAL * MAX_RISK_PER_TRADE  # ₹2,000
+MAX_DAILY_LOSS = 0.05  # 5% kill switch (₹5,000)
 MAX_CONCURRENT_TRADES = 3
 MIN_RR_RATIO = 2.0  # Minimum reward:risk ratio
 
@@ -495,6 +495,133 @@ NSE_HOLIDAYS_2026 = [
     "2026-07-17", "2026-08-15", "2026-08-26", "2026-10-02",
     "2026-10-20", "2026-10-21", "2026-11-05", "2026-12-25"
 ]
+
+# ============== PRE-TRADE SAFETY CHECK ==============
+
+def pre_trade_safety_check(kite):
+    """
+    Run safety checks BEFORE any trade execution.
+    Returns: (should_trade: bool, reason: str, risk_level: str)
+    
+    Risk levels: 'normal', 'reduced', 'minimal', 'no_trade'
+    """
+    trade_log.info("Running pre-trade safety check...")
+    
+    red_flags = 0
+    warnings = []
+    
+    # 1. Check India VIX
+    try:
+        vix_quote = kite.quote(['NSE:INDIA VIX'])
+        vix = list(vix_quote.values())[0]['last_price']
+        trade_log.info(f"VIX: {vix:.2f}")
+        
+        if vix >= 25:
+            red_flags += 2
+            warnings.append(f"VIX EXTREME ({vix:.1f}) - NO TRADES")
+        elif vix >= 20:
+            red_flags += 1
+            warnings.append(f"VIX HIGH ({vix:.1f}) - Reduce size")
+    except Exception as e:
+        trade_log.warning(f"Could not fetch VIX: {e}")
+        vix = 20  # Assume elevated
+    
+    # 2. Check Market Breadth (sample 20 stocks)
+    try:
+        sample_stocks = [
+            'NSE:RELIANCE', 'NSE:TCS', 'NSE:HDFCBANK', 'NSE:INFY', 'NSE:ICICIBANK',
+            'NSE:HINDUNILVR', 'NSE:SBIN', 'NSE:BHARTIARTL', 'NSE:ITC', 'NSE:KOTAKBANK',
+            'NSE:LT', 'NSE:AXISBANK', 'NSE:BAJFINANCE', 'NSE:TITAN', 'NSE:SUNPHARMA',
+            'NSE:MARUTI', 'NSE:HCLTECH', 'NSE:WIPRO', 'NSE:NTPC', 'NSE:POWERGRID'
+        ]
+        quotes = kite.quote(sample_stocks)
+        
+        gainers = 0
+        losers = 0
+        for symbol, data in quotes.items():
+            ltp = data['last_price']
+            prev_close = data['ohlc']['close']
+            if ltp > prev_close:
+                gainers += 1
+            elif ltp < prev_close:
+                losers += 1
+        
+        ad_ratio = gainers / losers if losers > 0 else 10
+        trade_log.info(f"A/D Ratio: {ad_ratio:.2f} (Adv: {gainers}, Dec: {losers})")
+        
+        if ad_ratio < 0.5:
+            red_flags += 2
+            warnings.append(f"A/D RATIO PANIC ({ad_ratio:.2f}) - Avoid longs")
+        elif ad_ratio < 1.0:
+            red_flags += 1
+            warnings.append(f"A/D Ratio weak ({ad_ratio:.2f})")
+    except Exception as e:
+        trade_log.warning(f"Could not check breadth: {e}")
+    
+    # 3. Check Nifty Trend
+    try:
+        nifty_quote = kite.quote(['NSE:NIFTY 50'])
+        nifty_data = list(nifty_quote.values())[0]
+        nifty_ltp = nifty_data['last_price']
+        nifty_close = nifty_data['ohlc']['close']
+        nifty_change = ((nifty_ltp - nifty_close) / nifty_close) * 100
+        trade_log.info(f"Nifty: {nifty_ltp:.2f} ({nifty_change:+.2f}%)")
+        
+        if nifty_change < -2:
+            red_flags += 2
+            warnings.append(f"NIFTY CRASH ({nifty_change:+.2f}%) - No trades")
+        elif nifty_change < -1:
+            red_flags += 1
+            warnings.append(f"Nifty down ({nifty_change:+.2f}%)")
+    except Exception as e:
+        trade_log.warning(f"Could not check Nifty: {e}")
+    
+    # 4. Check Day of Week
+    today = now_ist()
+    day_name = today.strftime('%A')
+    if day_name == 'Friday':
+        warnings.append("FRIDAY - Book profits, avoid new positions")
+    
+    # Determine risk level and action
+    if red_flags >= 4:
+        risk_level = 'no_trade'
+        should_trade = False
+        reason = "MULTIPLE RED FLAGS - Market in panic/crash mode"
+    elif red_flags >= 2:
+        risk_level = 'minimal'
+        should_trade = True  # Allow but with warnings
+        reason = "HIGH RISK - Trade only with 50% size"
+    elif red_flags >= 1:
+        risk_level = 'reduced'
+        should_trade = True
+        reason = "ELEVATED RISK - Be selective"
+    else:
+        risk_level = 'normal'
+        should_trade = True
+        reason = "Normal conditions"
+    
+    # Log result
+    trade_log.info(f"Safety Check Result: {risk_level.upper()}")
+    trade_log.info(f"Should Trade: {should_trade}")
+    trade_log.info(f"Reason: {reason}")
+    if warnings:
+        for w in warnings:
+            trade_log.warning(f"Warning: {w}")
+    
+    return should_trade, reason, risk_level, warnings
+
+
+def get_adjusted_risk_amount(risk_level):
+    """Get adjusted max risk based on market conditions"""
+    if risk_level == 'normal':
+        return MAX_RISK_AMOUNT  # ₹200
+    elif risk_level == 'reduced':
+        return MAX_RISK_AMOUNT * 0.75  # ₹150
+    elif risk_level == 'minimal':
+        return MAX_RISK_AMOUNT * 0.5  # ₹100
+    else:  # no_trade
+        return 0
+
 
 # ============== HELPER FUNCTIONS ==============
 
@@ -1400,6 +1527,29 @@ def scan_for_signals(kite, check_margin=True):
     print("\n" + "=" * 70)
     print(f"🔍 SCANNING FOR TRADE SIGNALS - {now_ist().strftime('%Y-%m-%d %H:%M:%S')} IST")
     print("=" * 70)
+    
+    # ============ STEP 0: PRE-TRADE SAFETY CHECK ============
+    print("\n  🛡️ Running Pre-Trade Safety Check...")
+    should_trade, reason, risk_level, warnings = pre_trade_safety_check(kite)
+    
+    print(f"\n  ┌─ SAFETY CHECK RESULT ─────────────────────────────────────")
+    print(f"  │  Risk Level: {risk_level.upper()}")
+    print(f"  │  Status: {'✅ OK to trade' if should_trade else '🔴 DO NOT TRADE'}")
+    if warnings:
+        for w in warnings:
+            print(f"  │  ⚠️ {w}")
+    print(f"  └───────────────────────────────────────────────────────────")
+    
+    if not should_trade:
+        print(f"\n  🛑 TRADING BLOCKED: {reason}")
+        print(f"  💡 Wait for market conditions to improve.")
+        trade_log.warning(f"Trading blocked by safety check: {reason}")
+        return []
+    
+    # Adjust risk based on market conditions
+    adjusted_risk = get_adjusted_risk_amount(risk_level)
+    if adjusted_risk < MAX_RISK_AMOUNT:
+        print(f"\n  ⚠️ Risk reduced to ₹{adjusted_risk:.0f} due to market conditions")
     
     # ============ STEP 1: CHECK AVAILABLE FUNDS FIRST ============
     available_margin = check_available_margin(kite)

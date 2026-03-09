@@ -38,16 +38,16 @@
 
 ### B. Position Sizing Rules
 ```
-Capital: ₹30,000
+Capital: ₹1,00,000
 
 Normal Conditions (VIX < 20):
-- Max risk per trade: ₹600 (2%)
-- Max position size: 60% of capital
+- Max risk per trade: ₹2,000 (2%)
+- Max position size: 60% of capital (₹60,000)
 - Max concurrent trades: 3
 
 High Volatility (VIX 20-25):
-- Max risk per trade: ₹300 (1%)
-- Max position size: 40% of capital
+- Max risk per trade: ₹1,000 (1%)
+- Max position size: 40% of capital (₹40,000)
 - Max concurrent trades: 2
 
 Extreme Volatility (VIX > 25):
@@ -186,14 +186,14 @@ WHY: Weekend gap risk can wipe out weeks of profits
 
 ### Automatic Trading Halt When:
 ```
-1. Daily Loss > 5% of capital (₹1,500)
+1. Daily Loss > 5% of capital (₹5,000)
    → STOP trading for the day
 
-2. Weekly Loss > 10% of capital (₹3,000)
+2. Weekly Loss > 10% of capital (₹10,000)
    → STOP trading for the week
    → Review what went wrong
 
-3. Monthly Loss > 15% of capital (₹4,500)
+3. Monthly Loss > 15% of capital (₹15,000)
    → STOP trading for the month
    → Reassess strategy completely
 
