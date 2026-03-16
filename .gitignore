@@ -1,51 +1,40 @@
-# Credentials and secrets (NEVER commit these!)
-.kite_creds.json
-.kite_session.json
-*.env
-.env.*
-
-# Session and cache files
+# Python
 __pycache__/
-*.pyc
-*.pyo
-.cache/
-*.log
-
-# Data bank - included for backtesting
-# data_bank/
-
-# Tracked positions (live trading state)
-.tracked_positions.json
-
-# IDE and editor
-.vscode/
-.idea/
-*.swp
-*.swo
-.cursor/
-
-# Virtual environments
+*.py[cod]
+*.so
+.Python
+env/
 venv/
-my_venv/
 .venv/
+pip-log.txt
 
-# OS files
-.DS_Store
-Thumbs.db
+# Rust
+backtest_rust/target/
 
-# Jupyter
-.ipynb_checkpoints/
-
-# Logs directory (keep structure, ignore contents)
-logs/*.log
-
-# Tradebook (contains trade history)
-tradebook/
-
-# Test files
+# Data files (too large)
+trading_data_repo/
+nifty_data.zip
 *.xlsx
 *.csv
 
-# Backup files
-*.backup
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credentials (never commit)
+.kite_creds.json
+*.pem
+*.key
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
 *.bak
