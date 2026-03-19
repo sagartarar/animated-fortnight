@@ -1,25 +1,25 @@
+# Sensitive/Runtime files
+.kite_session.json
+.active_trades.json
+.tracked_positions.json
+*.log
+
+# Rust build artifacts
+target/
+Cargo.lock
+
 # Python
 __pycache__/
-*.py[cod]
-*.so
-.Python
-env/
-venv/
-.venv/
-pip-log.txt
+*.pyc
+*.pyo
+*.egg-info/
 
-# Rust
-backtest_rust/target/
-
-# Data files (too large)
+# Data (large files)
 trading_data_repo/
-nifty_data.zip
-*.xlsx
-*.csv
 
 # IDE
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
 
@@ -27,14 +27,5 @@ nifty_data.zip
 .DS_Store
 Thumbs.db
 
-# Credentials (never commit)
-.kite_creds.json
-*.pem
-*.key
-
-# Logs
-*.log
-
-# Temporary
-*.tmp
-*.bak
+# Cursor
+.cursor/
