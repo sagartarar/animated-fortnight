@@ -248,8 +248,8 @@ fn generate_momentum_signal(candles: &[ProcessedCandle], idx: usize, date: &str)
     // Calculate momentum
     let momentum = calculate_first_30min_return(candles, date)?;
     
-    // Min momentum threshold (relaxed from 0.15 to 0.1)
-    if momentum.abs() < 0.10 {
+    // Min momentum threshold (relaxed to 0.08% as per research)
+    if momentum.abs() < 0.08 {
         return None;
     }
     
@@ -270,24 +270,32 @@ fn generate_vwap_signal(candles: &[ProcessedCandle], idx: usize) -> Option<(Stri
         return None;
     }
     
-    // ADX filter (relaxed from 25 to 20)
-    if candle.adx.is_nan() || candle.adx < 20.0 {
-        return None;
-    }
-    
-    // VWAP deviation check
+    // VWAP deviation check (allow even without ADX filter for more signals)
     if candle.vwap.is_nan() {
         return None;
     }
     
     let deviation = ((candle.close - candle.vwap) / candle.vwap) * 100.0;
     
-    // Need significant deviation (relaxed from 0.5 to 0.3)
-    if deviation.abs() < 0.3 {
+    // Need significant deviation (0.35% as per research)
+    if deviation.abs() < 0.35 {
         return None;
     }
     
-    // Simple direction: above VWAP = SHORT (mean reversion), below = LONG
+    // Check ADX if available (relaxed to 18)
+    if !candle.adx.is_nan() && candle.adx >= 18.0 {
+        // ADX confirms trend - follow trend direction
+        if candle.plus_di > candle.minus_di && deviation > 0.0 {
+            // Bullish trend above VWAP - continue LONG
+            return Some(("LONG".to_string(), deviation));
+        } else if candle.minus_di > candle.plus_di && deviation < 0.0 {
+            // Bearish trend below VWAP - continue SHORT
+            return Some(("SHORT".to_string(), deviation));
+        }
+        // Otherwise mean reversion
+    }
+    
+    // Default: mean reversion (above VWAP = SHORT, below = LONG)
     let trade_type = if deviation > 0.0 { "SHORT" } else { "LONG" };
     
     Some((trade_type.to_string(), deviation))
@@ -447,6 +455,10 @@ struct RiskState {
     weekly_pnl: f64,
     monthly_pnl: f64,
     equity_history: Vec<f64>,
+    // Track current periods for reset
+    current_day: String,
+    current_week: u32,
+    current_month: u32,
 }
 
 impl RiskState {
@@ -459,6 +471,29 @@ impl RiskState {
             weekly_pnl: 0.0,
             monthly_pnl: 0.0,
             equity_history: vec![starting_capital],
+            current_day: String::new(),
+            current_week: 0,
+            current_month: 0,
+        }
+    }
+    
+    fn check_and_reset_periods(&mut self, date: &str, week: u32, month: u32) {
+        // Reset daily P&L if day changed
+        if date != self.current_day {
+            self.daily_pnl = 0.0;
+            self.current_day = date.to_string();
+        }
+        
+        // Reset weekly P&L if week changed
+        if week != self.current_week {
+            self.weekly_pnl = 0.0;
+            self.current_week = week;
+        }
+        
+        // Reset monthly P&L if month changed
+        if month != self.current_month {
+            self.monthly_pnl = 0.0;
+            self.current_month = month;
         }
     }
     
@@ -553,15 +588,39 @@ fn load_stock_data(file_path: &Path) -> Option<(String, Vec<ProcessedCandle>)> {
     let file = File::open(file_path).ok()?;
     let mut reader = ReaderBuilder::new().has_headers(true).from_reader(file);
     let candles: Vec<Candle> = reader.deserialize().filter_map(|r| r.ok()).collect();
-    if candles.len() < 100 { return None; }
+    if candles.len() < 100 { 
+        eprintln!("Skipping {}: only {} candles", symbol, candles.len());
+        return None; 
+    }
 
     let mut processed: Vec<ProcessedCandle> = Vec::with_capacity(candles.len());
     for candle in &candles {
-        // Handle timezone format: "2015-02-02 09:15:00+05:30" -> "2015-02-02 09:15:00"
-        let date_str = candle.date.split('+').next().unwrap_or(&candle.date);
-        // Also handle case with space before timezone
-        let date_str = date_str.trim();
-        let datetime = NaiveDateTime::parse_from_str(date_str, "%Y-%m-%d %H:%M:%S").ok()?;
+        // Robust date parsing for various formats
+        let mut date_str = candle.date.clone();
+        
+        // Trim whitespace
+        date_str = date_str.trim().to_string();
+        
+        // Replace 'T' with space for ISO format
+        date_str = date_str.replace('T', " ");
+        
+        // Handle timezone by truncating after position 19 (YYYY-MM-DD HH:MM:SS)
+        // This handles +05:30, -05:30, etc.
+        if date_str.len() > 19 {
+            // Check if position 19 is where time ends
+            if date_str.chars().nth(19).map_or(false, |c| c == '+' || c == '-' || c == '.') {
+                date_str = date_str[..19].to_string();
+            }
+        }
+        
+        let datetime = match NaiveDateTime::parse_from_str(&date_str, "%Y-%m-%d %H:%M:%S") {
+            Ok(dt) => dt,
+            Err(e) => {
+                eprintln!("Date parse error for {}: {} (input: {})", symbol, e, candle.date);
+                continue;
+            }
+        };
+        
         processed.push(ProcessedCandle {
             datetime, date_only: datetime.date().to_string(), time: datetime.time(),
             open: candle.open, high: candle.high, low: candle.low, close: candle.close, volume: candle.volume,
@@ -570,7 +629,13 @@ fn load_stock_data(file_path: &Path) -> Option<(String, Vec<ProcessedCandle>)> {
         });
     }
     
-    if processed.len() < 100 { return None; }
+    if processed.len() < 100 { 
+        eprintln!("Skipping {}: only {} valid candles after parsing", symbol, processed.len());
+        return None; 
+    }
+
+    // Sort by datetime to ensure chronological order
+    processed.sort_by(|a, b| a.datetime.cmp(&b.datetime));
 
     let closes: Vec<f64> = processed.iter().map(|c| c.close).collect();
     let highs: Vec<f64> = processed.iter().map(|c| c.high).collect();
@@ -624,9 +689,18 @@ fn simulate_strategy(strategy_name: &str, candles: &[ProcessedCandle], symbol: &
             continue;
         }
         
+        // Check and reset risk state periods
+        let week = candle.datetime.iso_week().week();
+        let month = candle.datetime.month();
+        risk_state.check_and_reset_periods(date, week, month);
+        
         // Check if we can trade
-        let (size_mult, _) = risk_state.get_position_multiplier(*capital);
+        let (size_mult, reason) = risk_state.get_position_multiplier(*capital);
         if size_mult <= 0.0 || *capital < 50000.0 {
+            // Log first time we hit a limit for debugging
+            if !reason.is_empty() && !reason.contains("FULL") {
+                // Only log periodically to avoid spam
+            }
             continue;
         }
         
@@ -718,6 +792,16 @@ fn simulate_strategy(strategy_name: &str, candles: &[ProcessedCandle], symbol: &
                     exit_reason = "TARGET".to_string();
                     break;
                 }
+            }
+        }
+        
+        // Fallback: if no exit condition hit, use last candle in window
+        if exit_price.is_none() && (i + 1) < candles.len() {
+            let last_idx = std::cmp::min(i + 29, candles.len() - 1);
+            // Only use if same day
+            if candles[last_idx].date_only == *date {
+                exit_price = Some(candles[last_idx].close);
+                exit_reason = "WINDOW_END".to_string();
             }
         }
         
