@@ -557,8 +557,19 @@ fn load_stock_data(file_path: &Path) -> Option<(String, Vec<ProcessedCandle>)> {
 
     let mut processed: Vec<ProcessedCandle> = Vec::with_capacity(candles.len());
     for candle in &candles {
-        let date_str = candle.date.split('+').next().unwrap_or(&candle.date);
-        let datetime = NaiveDateTime::parse_from_str(date_str, "%Y-%m-%d %H:%M:%S").ok()?;
+        // Robust date parsing: handle +05:30, -05:30, T format, fractional seconds, trim
+        let mut date_str = candle.date.split('+').next().unwrap_or(&candle.date).trim().to_string();
+        if date_str.len() > 19 {
+            let after_time = &date_str[19..];
+            if after_time.starts_with('-') || after_time.starts_with('Z') {
+                date_str = date_str[..19].to_string();
+            }
+        }
+        date_str = date_str.replace('T', " ");
+        if let Some(dot) = date_str.find('.') {
+            date_str = date_str[..dot].to_string();
+        }
+        let datetime = NaiveDateTime::parse_from_str(date_str.trim(), "%Y-%m-%d %H:%M:%S").ok()?;
         processed.push(ProcessedCandle {
             datetime, date_only: datetime.date().to_string(), time: datetime.time(),
             open: candle.open, high: candle.high, low: candle.low, close: candle.close, volume: candle.volume,
@@ -567,6 +578,9 @@ fn load_stock_data(file_path: &Path) -> Option<(String, Vec<ProcessedCandle>)> {
         });
     }
     if processed.len() < 100 { return None; }
+
+    // Ensure chronological order for correct day_opens and indicators
+    processed.sort_by(|a, b| a.datetime.cmp(&b.datetime));
 
     let closes: Vec<f64> = processed.iter().map(|c| c.close).collect();
     let highs: Vec<f64> = processed.iter().map(|c| c.high).collect();
@@ -770,8 +784,15 @@ fn main() {
                 } else {
                     if future.high >= opp.sl_price { exit_price = Some(opp.sl_price); exit_reason = "SL".to_string(); break; }
                     if future.low <= opp.target_price { exit_price = Some(opp.target_price); exit_reason = "TARGET".to_string(); break; }
-                }
             }
+        }
+    }
+
+        // Fallback: if loop completed without exit (e.g. data gap, last candle before 15:15), use last candle
+        if exit_price.is_none() && opp.candle_idx + 1 < candles.len() {
+            let last_idx = (opp.candle_idx + 19).min(candles.len() - 1);
+            exit_price = Some(candles[last_idx].close);
+            exit_reason = "WINDOW_END".to_string();
         }
 
         if let Some(exit_px) = exit_price {
